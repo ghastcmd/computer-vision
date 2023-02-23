@@ -1,7 +1,7 @@
 from PIL import Image
 import numpy as np
 
-def apply_filter(image, filter_size, filter_weights):
+def apply_filter(image, filter_size: int, filter_weights: list[int]) -> np.ndarray:
     # convertendo a imagem em um numpy array
     image = np.array(image)
 
