@@ -49,9 +49,9 @@ filter_weights = [1, 1, 1, 1,
                   1, 1, 1, 1,
                   1, 1, 1, 1]
 
-image1 = Image.open('q2_1.ppm').convert('L')
-image2 = Image.open('q2_2.ppm').convert('L')
-image3 = Image.open('q2_3.ppm').convert('L')
+image1 = Image.open('./images/q2_1.ppm').convert('L')
+image2 = Image.open('./images/q2_2.ppm').convert('L')
+image3 = Image.open('./images/q2_3.ppm').convert('L')
 
 # Aplicando o mean filter nas imagens iniciais
 mean_image1 = mean_filter(image1, filter_size, filter_weights)
@@ -64,9 +64,9 @@ median_image2 = median_filter(image2, filter_size, filter_weights)
 median_image3 = median_filter(image3, filter_size, filter_weights)
 
 # Salvando as imagens
-Image.fromarray(np.uint8(mean_image1 * 255)).save('../images/mean_q2_1.ppm')
-Image.fromarray(np.uint8(mean_image2 * 255)).save('../images/mean_q2_2.ppm')
-Image.fromarray(np.uint8(mean_image3 * 255)).save('../images/mean_q2_3.ppm')
-Image.fromarray(np.uint8(median_image1 * 255)).save('../images/median_q2_1.ppm')
-Image.fromarray(np.uint8(median_image2 * 255)).save('../images/median_q2_2.ppm')
-Image.fromarray(np.uint8(median_image3 * 255)).save('../images/median_q2_3.ppm')
+Image.fromarray(np.uint8(mean_image1 * 255)).save('./images-out/mean_q2_1.ppm')
+Image.fromarray(np.uint8(mean_image2 * 255)).save('./images-out/mean_q2_2.ppm')
+Image.fromarray(np.uint8(mean_image3 * 255)).save('./images-out/mean_q2_3.ppm')
+Image.fromarray(np.uint8(median_image1 * 255)).save('./images-out/median_q2_1.ppm')
+Image.fromarray(np.uint8(median_image2 * 255)).save('./images-out/median_q2_2.ppm')
+Image.fromarray(np.uint8(median_image3 * 255)).save('./images-out/median_q2_3.ppm')

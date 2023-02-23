@@ -24,7 +24,7 @@ def apply_filter(image, filter_size, filter_weights):
     return filtered_image
 
 
-image = Image.open('q1.ppm').convert('L')
+image = Image.open('./images/q1.ppm').convert('L')
 
 # definindo o tamanho do filtro e os pesos
 filter_size = 3
@@ -33,4 +33,4 @@ filter_weights = [1, 1, 1, 1, 1, 1, 1, 1, 1]
 # aplicando o filtro
 filtered_image = apply_filter(image, filter_size, filter_weights)
 
-Image.fromarray(np.uint8(filtered_image * 255)).save('../images/filtered_q1.ppm')
+Image.fromarray(np.uint8(filtered_image * 255)).save('./images-out/filtered_q1.ppm')
