@@ -18,9 +18,6 @@ def apply_filter(image, filter_size: int, filter_weights: list[int]) -> np.ndarr
             window = padded_image[i:i+filter_size, j:j+filter_size]
             filtered_image[i, j] = np.sum(window * filter_matrix)
 
-    # normalizando a imagem
-    filtered_image = (filtered_image - np.min(filtered_image)) / (np.max(filtered_image) - np.min(filtered_image))
-
     return filtered_image
 
 
@@ -32,5 +29,8 @@ filter_weights = [1, 1, 1, 1, 1, 1, 1, 1, 1]
 
 # aplicando o filtro
 filtered_image = apply_filter(image, filter_size, filter_weights)
+
+# normalizando a imagem
+filtered_image = (filtered_image - np.min(filtered_image)) / (np.max(filtered_image) - np.min(filtered_image))
 
 Image.fromarray(np.uint8(filtered_image * 255)).save('./images-out/filtered_q1.ppm')
