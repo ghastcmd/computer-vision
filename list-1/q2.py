@@ -20,9 +20,6 @@ def mean_filter(image, filter_size, filter_weights):
             window = padded_image[i:i+filter_size, j:j+filter_size]
             filtered_image[i, j] = np.sum(window * filter_matrix) / (np.sum(filter_matrix))
 
-    # normalizando a imagem
-    filtered_image = (filtered_image - np.min(filtered_image)) / (np.max(filtered_image) - np.min(filtered_image))
-
     return filtered_image
 
 # Median filter
@@ -38,7 +35,6 @@ def median_filter(image, filter_size, filter_weights):
             window = padded_image[i:i+filter_size, j:j+filter_size]
             filtered_image[i, j] = np.median(window)
 
-    filtered_image = (filtered_image - np.min(filtered_image)) / (np.max(filtered_image) - np.min(filtered_image))
     return filtered_image
 
 
@@ -53,15 +49,25 @@ image1 = Image.open('./images/q2_1.ppm').convert('L')
 image2 = Image.open('./images/q2_2.ppm').convert('L')
 image3 = Image.open('./images/q2_3.ppm').convert('L')
 
-# Aplicando o mean filter nas imagens iniciais
+# Aplicando o mean filter nas imagens iniciais e normalizando a imagem
 mean_image1 = mean_filter(image1, filter_size, filter_weights)
+mean_image1 = (mean_image1 - np.min(mean_image1)) / (np.max(mean_image1) - np.min(mean_image1))
+
 mean_image2 = mean_filter(image2, filter_size, filter_weights)
+mean_image2 = (mean_image2 - np.min(mean_image2)) / (np.max(mean_image2) - np.min(mean_image2))
+
 mean_image3 = mean_filter(image3, filter_size, filter_weights)
+mean_image3 = (mean_image3 - np.min(mean_image3)) / (np.max(mean_image3) - np.min(mean_image3))
 
 # Aplicando o median filter nas imagens iniciais
 median_image1 = median_filter(image1, filter_size, filter_weights)
+median_image1 = (median_image1 - np.min(median_image1)) / (np.max(median_image1) - np.min(median_image1))
+
 median_image2 = median_filter(image2, filter_size, filter_weights)
+median_image2 = (median_image2 - np.min(median_image2)) / (np.max(median_image2) - np.min(median_image2))
+
 median_image3 = median_filter(image3, filter_size, filter_weights)
+median_image3 = (median_image3 - np.min(median_image3)) / (np.max(median_image3) - np.min(median_image3))
 
 # Salvando as imagens
 Image.fromarray(np.uint8(mean_image1 * 255)).save('./images-out/mean_q2_1.ppm')
