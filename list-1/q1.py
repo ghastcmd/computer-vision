@@ -1,7 +1,7 @@
 from PIL import Image
 import numpy as np
 
-def apply_filter(image, filter_size: int, filter_weights: list[int]) -> np.ndarray:
+def apply_filter(image, filter_size: int, filter_weights) -> np.ndarray:
     # convertendo a imagem em um numpy array
     image = np.array(image)
 
@@ -20,17 +20,18 @@ def apply_filter(image, filter_size: int, filter_weights: list[int]) -> np.ndarr
 
     return filtered_image
 
+if __name__ == '__main__':
 
-image = Image.open('./images/q1.ppm').convert('L')
+    image = Image.open('./images/q1.ppm').convert('L')
 
-# definindo o tamanho do filtro e os pesos
-filter_size = 3
-filter_weights = [1, 1, 1, 1, 1, 1, 1, 1, 1]
+    # definindo o tamanho do filtro e os pesos
+    filter_size = 3
+    filter_weights = [1, 1, 1, 1, 1, 1, 1, 1, 1]
 
-# aplicando o filtro
-filtered_image = apply_filter(image, filter_size, filter_weights)
+    # aplicando o filtro
+    filtered_image = apply_filter(image, filter_size, filter_weights)
 
-# normalizando a imagem
-filtered_image = (filtered_image - np.min(filtered_image)) / (np.max(filtered_image) - np.min(filtered_image))
+    # normalizando a imagem
+    filtered_image = (filtered_image - np.min(filtered_image)) / (np.max(filtered_image) - np.min(filtered_image))
 
-Image.fromarray(np.uint8(filtered_image * 255)).save('./images-out/filtered_q1.ppm')
+    Image.fromarray(np.uint8(filtered_image * 255)).save('./images-out/filtered_q1.ppm')
