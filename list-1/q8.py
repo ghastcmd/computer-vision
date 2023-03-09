@@ -4,6 +4,7 @@
 # https://en.wikipedia.org/wiki/Sobel_operator
 
 import cv2
+import matplotlib.pyplot as plt
 import numpy as np
 
 from q1 import apply_filter
@@ -41,7 +42,7 @@ def get_image(filepath):
     # The image is resized for it to be faster
     return cv2.resize(image, dsize=(w // 16, h // 16))
 
-images = [get_image(filepath) for filepath in images_filepath]
+orig_images = [get_image(filepath) for filepath in images_filepath]
 
 def derivative_x(image):
     return apply_filter(image, 3, deriv_kernel_x.flatten())
@@ -59,7 +60,7 @@ def sobel(image):
     return sobel_gradient
 
 deriv_imgs = []
-for names, image in zip(images_filepath, images):
+for names, image in zip(images_filepath, orig_images):
     deriv_x = derivative_x(image)
     deriv_y = derivative_y(image)
     abs_gradient = gradient(deriv_x, deriv_y)
@@ -71,13 +72,32 @@ for images in deriv_imgs:
         sobel_gradient = sobel(image)
         final_imgs.append(sobel_gradient)
 
-for i, imgs in enumerate(deriv_imgs):
-    cv2.imwrite(f'./images-out/deriv_x_{i}_q8.jpg', imgs[0])
-    cv2.imwrite(f'./images-out/deriv_y_{i}_q8.jpg', imgs[1])
-    cv2.imwrite(f'./images-out/grad_{i}_q8.jpg', imgs[2])
-
 grouped_final_imgs = [final_imgs[i:i+3] for i in range(0, len(final_imgs), 3)]
+
+fig, axes = plt.subplots(nrows=len(deriv_imgs) + len(grouped_final_imgs) + 1, ncols=3, figsize=(10, 10))
+fig.tight_layout(pad=1)
+
+for i, img in enumerate(orig_images):
+    axes[0, i].imshow(cv2.cvtColor(img, cv2.COLOR_GRAY2RGB))
+    axes[0, i].set_title('orig', fontsize=12)
+
+def normalize(img):
+    return (img / np.max(img)) * 255
+
+for i, img in enumerate(deriv_imgs):
+    axes[1, i].imshow(cv2.cvtColor(normalize(img[0]).astype(np.uint8), cv2.COLOR_GRAY2RGB))
+    axes[1, i].set_title(f'deriv_x_{i}_q8', fontsize=12)
+    axes[2, i].imshow(cv2.cvtColor(normalize(img[1]).astype(np.uint8), cv2.COLOR_GRAY2RGB))
+    axes[2, i].set_title(f'deriv_x_{i}_q8', fontsize=12)
+    axes[3, i].imshow(cv2.cvtColor(normalize(img[2]).astype(np.uint8), cv2.COLOR_GRAY2RGB))
+    axes[3, i].set_title(f'deriv_x_{i}_q8', fontsize=12)
+
 for i, img in enumerate(grouped_final_imgs):
-    cv2.imwrite(f'./images-out/sobel_x_{i}_q8.jpg', img[0])
-    cv2.imwrite(f'./images-out/sobel_y_{i}_q8.jpg', img[1])
-    cv2.imwrite(f'./images-out/sobel_grad_{i}_q8.jpg', img[2])
+    axes[4, i].imshow(cv2.cvtColor(normalize(img[0]).astype(np.uint8), cv2.COLOR_GRAY2RGB))
+    axes[4, i].set_title(f'sobel_x_{i}_q8', fontsize=12)
+    axes[5, i].imshow(cv2.cvtColor(normalize(img[1]).astype(np.uint8), cv2.COLOR_GRAY2RGB))
+    axes[5, i].set_title(f'sobel_y_{i}_q8', fontsize=12)
+    axes[6, i].imshow(cv2.cvtColor(normalize(img[2]).astype(np.uint8), cv2.COLOR_GRAY2RGB))
+    axes[6, i].set_title(f'sobel_grad_{i}_q8', fontsize=12)
+
+plt.show()
