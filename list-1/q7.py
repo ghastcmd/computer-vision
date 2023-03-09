@@ -4,6 +4,7 @@
 # https://docs.opencv.org/3.4/d4/d1f/tutorial_pyramids.html
 
 import cv2
+import matplotlib.pyplot as plt
 import numpy as np
 
 original_image = cv2.imread('./images/q7.jpg')
@@ -51,5 +52,11 @@ def create_formated_picture(pyramid: list) -> np.ndarray:
 downsampled_pyramid_image = create_formated_picture(downsampled_pyramid)
 gaussian_pyramid_image = create_formated_picture(gaussian_pyramid)
 
-cv2.imwrite('./images-out/downsampled_pyramid_q7.jpg', downsampled_pyramid_image)
-cv2.imwrite('./images-out/gaussian_pyramid_q7.jpg', gaussian_pyramid_image)
+fig, axes = plt.subplots(nrows=1, ncols=2, figsize=(15, 15))
+
+axes[0].imshow(cv2.cvtColor(downsampled_pyramid_image, cv2.COLOR_BGR2RGB))
+axes[0].set_title('downsampled_pyramid_q7', fontsize=12)
+axes[1].imshow(cv2.cvtColor(gaussian_pyramid_image, cv2.COLOR_BGR2RGB))
+axes[1].set_title('gaussian_pyramid_q7', fontsize=12)
+
+plt.show()
