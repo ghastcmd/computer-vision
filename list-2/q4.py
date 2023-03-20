@@ -2,9 +2,10 @@ import os
 
 import numpy as np
 import matplotlib.pyplot as plt
+import skimage.draw
 import cv2
 
-def get_harris(image: np.ndarray, k = 0.05, threshold_corner = 0.001, threshold_edge = 0.001) -> tuple[np.ndarray, np.ndarray]:
+def get_harris_corners_coords(image: np.ndarray, k = 0.05, threshold_corner = 0.001) -> list[tuple[int, int]]:
     gray_image = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
     
     Ix = cv2.Sobel(gray_image, cv2.CV_64F, dx=1, dy=0)
@@ -19,20 +20,26 @@ def get_harris(image: np.ndarray, k = 0.05, threshold_corner = 0.001, threshold_
     
     harris_response = detA - k * traceA ** 2
     
-    corners = np.copy(image)
-    edges = np.copy(image)
+    # corners = np.copy(image)
+    # edges = np.copy(image)
     
     lambda_max = harris_response.max()
-    lambda_min = harris_response.min()
+    # lambda_min = harris_response.min()
     
-    for i, row in enumerate(harris_response):
-        for j, pixel in enumerate(row):
-            if pixel >= lambda_max * threshold_corner:
-                corners[i, j] = [0, 0, 255]
-            elif pixel <= lambda_min * threshold_edge:
-                edges[i, j] = [255, 0, 255]
+    def neighbors_max(x, y):
+        return harris_response[x-1:x+2, y-1:y+2].max()
     
-    return corners, edges
+    corners_coords = []
+    for i, row in enumerate(harris_response[1:-2]):
+        for j, pixel in enumerate(row[1:-2]):
+            if pixel >= lambda_max * threshold_corner and pixel >= neighbors_max(i+1, j+1):
+                # corners[i, j] = [0, 0, 255]
+                corners_coords.append((i+1, j+1))
+            # elif pixel <= lambda_min * threshold_edge:
+            #     edges[i, j] = [255, 0, 255]
+    
+    # return corners, edges
+    return corners_coords
 
 
 def concat_imgs(img1, img2) -> np.ndarray:
@@ -59,6 +66,16 @@ def cvt_rgb(image: np.ndarray) -> np.ndarray:
 def resize_tuple_scaled(shape, factor):
     return shape[0] // factor, shape[1] // factor
 
+def rectangle_corners(center: tuple[int], diag: int) -> tuple[tuple[int, int]]:
+        return (center[0] - diag, center[1] - diag), (center[0] + diag, center[1] + diag)
+
+def draw_all_rectangles(image, coords):
+    for coord in coords:
+        try:
+            image[skimage.draw.rectangle_perimeter(*rectangle_corners(coord, 2))] = [255, 0, 0]
+        except:
+            pass
+
 if __name__ == '__main__':
     root_path = './images'
     image_filepath_1 = 'calculator-1.jpg'
@@ -66,16 +83,30 @@ if __name__ == '__main__':
     image_1 = cv2.imread(os.path.join(root_path, image_filepath_1))
     image_2 = cv2.imread(os.path.join(root_path, image_filepath_2))
 
-    image_1 = cv2.resize(image_1, resize_tuple_scaled(image_1.shape, 16))
-    image_2 = cv2.resize(image_2, resize_tuple_scaled(image_2.shape, 16))
+    image_1 = cv2.resize(image_1, resize_tuple_scaled(image_1.shape, 8))
+    image_2 = cv2.resize(image_2, resize_tuple_scaled(image_2.shape, 8))
     
-    imgs = get_harris(image_1)
-    display_imgs_1 = cv2.cvtColor(concat_imgs(*imgs), cv2.COLOR_BGR2RGB)
+    # getting corner's coordinates
+    corner_coords_image_1 = get_harris_corners_coords(image_1)
+    corner_coords_image_2 = get_harris_corners_coords(image_2)
 
-    imgs = get_harris(image_2)
-    display_imgs_2 = cv2.cvtColor(concat_imgs(*imgs), cv2.COLOR_BGR2RGB)
+    # converting images to print on matplotlib
+    image_1 = cv2.cvtColor(image_1, cv2.COLOR_BGR2RGB)
+    image_2 = cv2.cvtColor(image_2, cv2.COLOR_BGR2RGB)
 
-    fig, axes = plt.subplots(1, 2, figsize=(15, 15))    
-    axes[0].imshow(display_imgs_1)
-    axes[1].imshow(display_imgs_2)
+    # drawing rectangles for each corner centroid
+    to_draw_image_1 = np.copy(image_1)
+    draw_all_rectangles(to_draw_image_1, corner_coords_image_1)
+
+    to_draw_image_2 = np.copy(image_2)
+    draw_all_rectangles(to_draw_image_2, corner_coords_image_2)
+
+    # plottig images
+    fig, axes = plt.subplots(1, 2, figsize=(15, 15))
+    axes[0].imshow(to_draw_image_1)
+    axes[0].set_aspect('auto')
+
+    axes[1].imshow(to_draw_image_2)
+    axes[1].set_aspect('auto')
+    
     plt.show()
