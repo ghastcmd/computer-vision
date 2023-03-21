@@ -174,9 +174,12 @@ if __name__ == '__main__':
     # creating single image to show with matches paired with a line
     show_image = concat_imgs(to_draw_image_1, to_draw_image_2)
     c_index = 0
+    colors = np.array([[197, 0, 197], [197, 0, 0], [0, 197, 0], [0, 0, 197], [197, 197, 0], [0, 197, 197]])
     for coord in paired_coords:
         coord[1][1] += width_image_1
-        show_image[skimage.draw.line(*coord[0], *coord[1])] = [255, 197, 255]
+        show_image[skimage.draw.line(*coord[0], *coord[1])] = colors[c_index]
+        c_index += 1
+        c_index %= len(colors)
 
     # plottig images
     fig, axes = plt.subplots(1, 1, figsize=(15, 15))
