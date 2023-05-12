@@ -3,3 +3,5 @@ venv/
 */__pycache__/
 list-3/final.jpg
 list-4/models
+list-4/output
+list-4/videos/output.mp4
